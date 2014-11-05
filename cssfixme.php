@@ -1,7 +1,14 @@
 <?php
+/*
+
+This is obviously just a quick and very dirty hack to make it easier to share CSS:fixme analysis of live CSS files out there in the wild.
+It would probably be better to port the JS code to Python or something and do the whole analysis / fixing server-side -
+but that's a bigger project..
+
+*/
 $url = isset($_GET['url']) ? $_GET['url'] : '';
 $html = file_get_contents('cssfixme.htm');
-
+$html = str_replace('if you find problems.', 'if you find problems.<br><form>Analyze URL (CSS files only): <input type="url" name="url" value="'.htmlentities($url).'"><input type="submit"></form>', $html);
 if($url && substr($url, 0, 4) == 'http'){
     $url_contents = get_url($url);
     $is_css_content = false;
