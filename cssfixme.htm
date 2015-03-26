@@ -61,7 +61,7 @@ function doTheBigStyleFixing(str){
         }else if(rule.type === 'comment'){
             pre.appendChild(document.createTextNode('\n/*' + rule.comment + '*/'))
         }else if(rule.type === 'media'){
-            pre.appendChild(document.createTextNode('\n' + strindent1 + '@media' + rule.media + '{' ));
+            pre.appendChild(document.createTextNode('\n' + strindent1 + '@media ' + rule.media + '{' ));
             for(var subrule, k = 0; subrule = rule.rules[k]; k++){
                 stringifyRuleToDOM(subrule, indent+1);
             }
