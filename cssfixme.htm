@@ -98,7 +98,7 @@ function createFixupRulesFromCSS(obj){
                 if(decl.property === 'display' && /box$/.test(decl.value) || /(box-|flex-)/.test(decl.property)){
                     var tmp = createFixupFlexboxDeclaration(decl, rule.declarations);
                     prop = tmp.property, value = tmp.value;
-                }else if(/-webkit-gradient/i.test(decl.value)){
+                }else if(/-webkit-(linear-|radial-)?gradient/i.test(decl.value)){
                     var tmp = createFixupGradientDeclaration(decl, rule.declarations);
                     prop = tmp.property, value = tmp.value;
                 }else{
@@ -326,10 +326,32 @@ function createFixupGradientDeclaration(decl, parent){
             }
         }
     }else{ // we're dealing with more modern syntax - should be somewhat easier, at least for linear gradients.
-        // Fix three things: remove -webkit-, add 'to ' before top/bottom, subtract 90 from deg-values
+        // Fix three things: remove -webkit-, add 'to ' before reversed top/bottom keywords, recalculate deg-values
         // -webkit-linear-gradient( [ [ <angle> | [top | bottom] || [left | right] ],]? <color-stop>[, <color-stop>]+);
         newValue = value.replace(/-webkit-/, '');
-        newValue = newValue.replace(/(top|bottom)/, 'to $1');
+        // Keywords top, bottom, left, right: can be stand-alone or combined pairwise but in any order ('top left' or 'left top')
+        // These give the starting edge or corner in the -webkit syntax. The standardised equivalent is 'to ' plus opposite values
+        newValue = newValue.replace(/(top|bottom|left|right)+\s*(top|bottom|left|right)*/, function(str){
+            var words = str.split(/\s+/);
+            for(var i=0; i<words.length; i++){
+                switch(words[i].toLowerCase()){
+                    case 'top':
+                        words[i] = 'bottom';
+                        break;
+                    case 'bottom':
+                        words[i] = 'top';
+                        break;
+                    case 'left':
+                        words[i] = 'right';
+                        break;
+                    case 'right':
+                        words[i] = 'left';
+                }
+            }
+            str = words.join(' ');
+            return ( 'to ' + str);
+        });
+
         newValue = newValue.replace(/\d+deg/, function (val) {
              return (360 - (parseInt(val)-90))+'deg';
          });
