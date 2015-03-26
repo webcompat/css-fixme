@@ -331,7 +331,7 @@ function createFixupGradientDeclaration(decl, parent){
         newValue = value.replace(/-webkit-/, '');
         newValue = newValue.replace(/(top|bottom)/, 'to $1');
         newValue = newValue.replace(/\d+deg/, function (val) {
-             return (parseInt(val)-90)+'deg';
+             return (360 - (parseInt(val)-90))+'deg';
          });
 
     }
