@@ -329,8 +329,8 @@ function createFixupGradientDeclaration(decl, parent){
         // Fix three things: remove -webkit-, add 'to ' before top/bottom, subtract 90 from deg-values
         // -webkit-linear-gradient( [ [ <angle> | [top | bottom] || [left | right] ],]? <color-stop>[, <color-stop>]+);
         newValue = value.replace(/-webkit-/, '');
-        newValue = value.replace(/(top|bottom)/, 'to $1');
-        newValue = value.replace(/\d+deg/, function (val) {
+        newValue = newValue.replace(/(top|bottom)/, 'to $1');
+        newValue = newValue.replace(/\d+deg/, function (val) {
              return (parseInt(val)-90)+'deg';
          });
 
