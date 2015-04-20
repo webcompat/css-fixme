@@ -12,7 +12,7 @@
 	<p>Note: some <em>-webkit-</em> prefixed properties do not (yet?) have standardised equivalents. This tool will deliberately not add pseudo-standard code on the assumption that the standards will one day match the current -webkit- implementation.</p>
 	<p>This uses the <a href="https://github.com/reworkcss/rework">ReworkCSS</a> library for parsing and stringifying CSS.</p>
 	<p>Paste CSS in this box to see what needs fixing:</p>
-	<textarea></textarea><br><button type="button" onclick="doTheBigStyleFixing(document.getElementsByTagName('textarea')[0].value)">Add standard equivalents for prefixed CSS</button>
+	<textarea></textarea><br><button type="button" onclick="doTheBigStyleFixing(document.getElementsByTagName('textarea')[0].value)">Add standard equivalents for prefixed CSS</button> <label><input type="checkbox" name="compact">Compact output (whitespace only after closing brace)</label>
 	<pre></pre>
 	<!--
 TODO: 	-webkit-border-radius: 50% 2px;
@@ -36,38 +36,40 @@ function doTheBigStyleFixing(str){
         return;
     }
     createFixupRulesFromCSS(oldRules);
-
+    var compact = document.getElementsByName('compact')[0].checked;
     for(var rule, i = 0; rule = oldRules.stylesheet.rules[i]; i++){
-    	stringifyRuleToDOM(rule, 1);
+    	stringifyRuleToDOM(rule, 1, compact);
     }
-    function stringifyRuleToDOM (rule, indent) {
+    function stringifyRuleToDOM (rule, indent, compact) {
        // rule.type, rule.selectors, rule.declarations
-       var strindent1 = (new Array(indent)).join('    '); // indent by four spaces per indentation level
-       var strindent2 = (new Array(indent  + 1)).join('    '); // indent by four spaces per indentation level
+       var strindent1 = compact ? '' : (new Array(indent)).join('    '); // indent by four spaces per indentation level
+       var strindent2 = compact ? '' :  (new Array(indent  + 1)).join('    '); // indent by four spaces per indentation level
+       var propValSep = compact ? ':' : ': ';
+       var prePropWS = compact ? '' : '\n';
        if(rule.type === 'rule'){
-			var theSelectors = rule.selectors.join(', ')
+			var theSelectors = rule.selectors.join(compact? ',\n' : ', ')
 			pre.appendChild(document.createTextNode( '\n' + strindent1 + theSelectors+'{'))
 			for(var decl, j = 0; decl = rule.declarations[j]; j++){
 				// decl.type, decl.property, decl.value
 				// custom: decl._fxjsdefined
 				parent = decl._fxjsdefined ? pre.appendChild(document.createElement('strong')) : pre;
 				if(decl.type === 'declaration'){
-						parent.appendChild(document.createTextNode('\n' + strindent2 + decl.property + ': ' + decl.value + ';'))
+						parent.appendChild(document.createTextNode(prePropWS + strindent2 + decl.property + propValSep + decl.value + ';'))
 				}else if(decl.type === 'comment'){
-						parent.appendChild(document.createTextNode('\n/*' + decl.comment + '*/'))
+						parent.appendChild(document.createTextNode( prePropWS + '/*' + decl.comment + '*/'))
 				}
 			}
-            pre.appendChild(document.createTextNode('\n' + strindent1 + '}'))
+            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}\n'))
         }else if(rule.type === 'comment'){
-            pre.appendChild(document.createTextNode('\n/*' + rule.comment + '*/'))
+            pre.appendChild(document.createTextNode( prePropWS + '/*' + rule.comment + '*/'))
         }else if(rule.type === 'media'){
-            pre.appendChild(document.createTextNode('\n' + strindent1 + '@media ' + rule.media + '{' ));
+            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '@media ' + rule.media + '{' ));
             for(var subrule, k = 0; subrule = rule.rules[k]; k++){
                 stringifyRuleToDOM(subrule, indent+1);
             }
-            pre.appendChild(document.createTextNode('\n' + strindent1 + '}'))
+            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}'))
 		}else if(rule.type === 'charset'){
-            pre.appendChild(document.createTextNode('\n' + strindent1 + '@charset ' + rule.charset + ';'))
+            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '@charset ' + rule.charset + ';'))
 
         }
 	}
