@@ -32,7 +32,7 @@ function doTheBigStyleFixing(str){
     try{
         var oldRules = css.parse(stripHTMLComments(str));
     }catch(e){
-        console.log('failed to parse '+str);
+        console.log('failed to parse stylesheet (' + str.length + ' characters) - error message from parser: ' + e.message);
         return;
     }
     createFixupRulesFromCSS(oldRules);
