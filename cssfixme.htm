@@ -249,7 +249,7 @@ function createFixupGradientDeclaration(decl, parent){
     if(head){
         value = value.substr(head.length);
     }
-    var m = value.match(/-webkit-gradient\s*\(\s*(linear|radial)\s*(.*)/), points=[], toColor, stops=[];
+    var m = value.match(/-webkit-gradient\s*\(\s*(linear|radial)\s*(.*)/);
     if(m){ // yay, really old syntax...
 
         // extracting the values..
@@ -260,11 +260,10 @@ function createFixupGradientDeclaration(decl, parent){
                 type = parts[i].args[0].name;
                 newValue += type + '-gradient('; // radial or linear
             }
-            stops = [];
+            var stops = [];
             if(/^linear/.test(type)){
                 // linear gradient, args 1 and 2 tend to be start/end keywords
-                console.log(value);
-                points = [].concat(parts[i].args[1].name.split(/\s+/), parts[i].args[2].name.split(/\s+/)); // example: [left, top, right, top]
+                var points = [].concat(parts[i].args[1].name.split(/\s+/), parts[i].args[2].name.split(/\s+/)); // example: [left, top, right, top]
                 // Old webkit syntax "uses a two-point syntax that lets you explicitly state where a linear gradient starts and ends"
                 // if start/end keywords are percentages, let's massage the values a little more..
                 var rxPercTest = /\d+\%/;
@@ -287,6 +286,7 @@ function createFixupGradientDeclaration(decl, parent){
                 newValue += 'circle ' + parts[i].args[4].name.replace(/(\d+)$/, '$1px') + ' at ' + parts[i].args[1].name.replace(/(\d+) /, '$1px ').replace(/(\d+)$/, '$1px');
             }
 
+            var toColor;
             for(var j = type === 'linear' ? 3 : 5; j < parts[i].args.length; j++){
                 var position, color, colorIndex;
                 if(parts[i].args[j].name === 'color-stop'){
@@ -367,7 +367,7 @@ function createFixupGradientDeclaration(decl, parent){
     if(head){
         newValue = head + newValue;
     }
-    GM_log(newValue)
+    // GM_log(newValue)
     return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true};
 }
 
