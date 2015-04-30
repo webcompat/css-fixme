@@ -263,7 +263,6 @@ function createFixupGradientDeclaration(decl, parent){
             stops = [];
             if(/^linear/.test(type)){
                 // linear gradient, args 1 and 2 tend to be start/end keywords
-                console.log(value);
                 points = [].concat(parts[i].args[1].name.split(/\s+/), parts[i].args[2].name.split(/\s+/)); // example: [left, top, right, top]
                 // Old webkit syntax "uses a two-point syntax that lets you explicitly state where a linear gradient starts and ends"
                 // if start/end keywords are percentages, let's massage the values a little more..
@@ -367,7 +366,7 @@ function createFixupGradientDeclaration(decl, parent){
     if(head){
         newValue = head + newValue;
     }
-    GM_log(newValue)
+    // GM_log(newValue)
     return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true};
 }
 
