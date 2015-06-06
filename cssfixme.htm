@@ -2,22 +2,22 @@
 <title>CSS:fixme</title>
 <script src="css-browserside.js">/* This is the CSS rework parser, converted from Node.js - code to something that runs in browsers with browserify */</script>
 <style type="text/css">pre strong{
-		background: yellow;
-		color:black;
-	}
-	textarea{width: 100%; min-height: 200px;}</style>
+        background: yellow;
+        color:black;
+    }
+    textarea{width: 100%; min-height: 200px;}</style>
 </head>
 <body>
-	<p>This tool attempts to fix non-standard CSS by adding standardised equivalents to all declarations that use <em>-webkit-</em>prefixed properties and values that have standardised equivalents. The standardised syntax is not always same as the -webkit- syntax, so getting everything right is a challenge. Please test this tool with various <em>-webkit-</em> prefixed CSS constructs and let me <a href="mailto:hsteen@mozilla.com">know</a> if you find problems.</p>
-	<p>Note: some <em>-webkit-</em> prefixed properties do not (yet?) have standardised equivalents. This tool will deliberately not add pseudo-standard code on the assumption that the standards will one day match the current -webkit- implementation.</p>
-	<p>This uses the <a href="https://github.com/reworkcss/rework">ReworkCSS</a> library for parsing and stringifying CSS.</p>
-	<p>Paste CSS in this box to see what needs fixing:</p>
-	<textarea></textarea><br><button type="button" onclick="doTheBigStyleFixing(document.getElementsByTagName('textarea')[0].value)">Add standard equivalents for prefixed CSS</button> <label><input type="checkbox" name="compact">Compact output (whitespace only after closing brace)</label>
-	<pre></pre>
-	<!--
-TODO: 	-webkit-border-radius: 50% 2px;
-	border-radius: 50% / 2px; ??
-	 -->
+    <p>This tool attempts to fix non-standard CSS by adding standardised equivalents to all declarations that use <em>-webkit-</em>prefixed properties and values that have standardised equivalents. The standardised syntax is not always same as the -webkit- syntax, so getting everything right is a challenge. Please test this tool with various <em>-webkit-</em> prefixed CSS constructs and let me <a href="mailto:hsteen@mozilla.com">know</a> if you find problems.</p>
+    <p>Note: some <em>-webkit-</em> prefixed properties do not (yet?) have standardised equivalents. This tool will deliberately not add pseudo-standard code on the assumption that the standards will one day match the current -webkit- implementation.</p>
+    <p>This uses the <a href="https://github.com/reworkcss/rework">ReworkCSS</a> library for parsing and stringifying CSS.</p>
+    <p>Paste CSS in this box to see what needs fixing:</p>
+    <textarea></textarea><br><button type="button" onclick="doTheBigStyleFixing(document.getElementsByTagName('textarea')[0].value)">Add standard equivalents for prefixed CSS</button> <label><input type="checkbox" name="compact">Compact output (whitespace only after closing brace)</label>
+    <pre></pre>
+    <!--
+TODO:     -webkit-border-radius: 50% 2px;
+    border-radius: 50% / 2px; ??
+     -->
 <script>
 // CSS property list, thanks to Jens Meiert. Extracted from http://meiert.com/en/indices/css-properties/ with this JS:
 // var props = []; for(var elms = document.querySelectorAll('a code'),el,i=0; el=elms[i]; i++){props.push(el.textContent)}; JSON.stringify(props)
@@ -25,7 +25,7 @@ var allW3CSSProperties = ["align-content","align-items","align-self","alignment-
 var warnAgainstPotentiallyOverwrittenValues = true; // outputs console error if we override an existing property except the non-standard one
 /* Derived from GreaseMonkey script. Adapted to give a prettier output.. */
 function doTheBigStyleFixing(str){
-	/* This method builds a "pretty" view of the CSS with amended rules highlighted in the PRE element */
+    /* This method builds a "pretty" view of the CSS with amended rules highlighted in the PRE element */
     var fixupStyle = {"type": "stylesheet", stylesheet: {rules: []}};
     var pre = document.getElementsByTagName('pre')[0], parent;
     pre.innerHTML = '';
@@ -38,7 +38,7 @@ function doTheBigStyleFixing(str){
     createFixupRulesFromCSS(oldRules);
     var compact = document.getElementsByName('compact')[0].checked;
     for(var rule, i = 0; rule = oldRules.stylesheet.rules[i]; i++){
-    	stringifyRuleToDOM(rule, 1, compact);
+        stringifyRuleToDOM(rule, 1, compact);
     }
     function stringifyRuleToDOM (rule, indent, compact) {
        // rule.type, rule.selectors, rule.declarations
@@ -47,18 +47,18 @@ function doTheBigStyleFixing(str){
        var propValSep = compact ? ':' : ': ';
        var prePropWS = compact ? '' : '\n';
        if(rule.type === 'rule'){
-			var theSelectors = rule.selectors.join(compact? ',\n' : ', ')
-			pre.appendChild(document.createTextNode( '\n' + strindent1 + theSelectors+'{'))
-			for(var decl, j = 0; decl = rule.declarations[j]; j++){
-				// decl.type, decl.property, decl.value
-				// custom: decl._fxjsdefined
-				parent = decl._fxjsdefined ? pre.appendChild(document.createElement('strong')) : pre;
-				if(decl.type === 'declaration'){
-						parent.appendChild(document.createTextNode(prePropWS + strindent2 + decl.property + propValSep + decl.value + ';'))
-				}else if(decl.type === 'comment'){
-						parent.appendChild(document.createTextNode( prePropWS + '/*' + decl.comment + '*/'))
-				}
-			}
+            var theSelectors = rule.selectors.join(compact? ',\n' : ', ')
+            pre.appendChild(document.createTextNode( '\n' + strindent1 + theSelectors+'{'))
+            for(var decl, j = 0; decl = rule.declarations[j]; j++){
+                // decl.type, decl.property, decl.value
+                // custom: decl._fxjsdefined
+                parent = decl._fxjsdefined ? pre.appendChild(document.createElement('strong')) : pre;
+                if(decl.type === 'declaration'){
+                        parent.appendChild(document.createTextNode(prePropWS + strindent2 + decl.property + propValSep + decl.value + ';'))
+                }else if(decl.type === 'comment'){
+                        parent.appendChild(document.createTextNode( prePropWS + '/*' + decl.comment + '*/'))
+                }
+            }
             pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}\n'))
         }else if(rule.type === 'comment'){
             pre.appendChild(document.createTextNode( prePropWS + '/*' + rule.comment + '*/'))
@@ -68,29 +68,30 @@ function doTheBigStyleFixing(str){
                 stringifyRuleToDOM(subrule, indent+1);
             }
             pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}'))
-		}else if(rule.type === 'charset'){
+        }else if(rule.type === 'charset'){
             pre.appendChild(document.createTextNode(prePropWS + strindent1 + '@charset ' + rule.charset + ';'))
 
         }
-	}
+    }
 }
 
 /*document.getElementsByTagName('textarea')[0].addEventListener('change', function(e){
-	doTheBigStyleFixing(e.target.value);
+    doTheBigStyleFixing(e.target.value);
 }, false);*/
 
 function createFixupRulesFromCSS(obj){
     var fixupRules = [], fixupDeclarations, prop, value;
     for(var rule, i = 0; rule = obj.stylesheet.rules[i]; i++){
-    	insertFixupDeclarations(rule);
+        insertFixupDeclarations(rule);
     }
     function insertFixupDeclarations(rule){
        // rule.type, rule.selectors, rule.declarations (rule.comment, rule.media)
+       var rxfix;
         if(rule.declarations){
             fixupDeclarations = [];
             for(var decl, j = 0; decl = rule.declarations[j]; j++){
                // decl.type, decl.property, decl.value
-               prop = '', value = '';
+               prop = '', value = '', rxfix = undefined;
                // sometimes sites include a background fallback colour but in the *same* declaration as -webkit-gradient.
                // It is better practise to have a separate 'background' declaration for the fallback colour. Let's add it.
                if(decl.property === 'background' && /(#\w{3,6})\s*-webkit-/.test(decl.value)){ // TODO: in reality, the color and -webkit-foo() could be in any order.. is this a problem?
@@ -102,7 +103,7 @@ function createFixupRulesFromCSS(obj){
                     prop = tmp.property, value = tmp.value;
                 }else if(/-webkit-(linear-|radial-)?gradient/i.test(decl.value)){
                     var tmp = createFixupGradientDeclaration(decl, rule.declarations);
-                    prop = tmp.property, value = tmp.value;
+                    prop = tmp.property, value = tmp.value, rxfix = tmp.rxfix;
                 }else{
                     if(/-webkit-/.test(decl.property)){
                        prop = decl.property.substr(8);
@@ -110,37 +111,37 @@ function createFixupRulesFromCSS(obj){
                     if(/-webkit-/.test(decl.value)){
                         value = decl.value.replace(/-webkit-/g, '');
                     }
-				}
-	            if(prop || value){
-	            	prop = prop || decl.property;
-	            	value = value || decl.value
-	            	if(hasDeclaration(fixupDeclarations.concat(rule.declarations), prop, value, false, true))continue;
-	            	if(warnAgainstPotentiallyOverwrittenValues){
-		            	var existingValue = getValueForProperty(fixupDeclarations.concat(rule.declarations), prop, false);
-		            	if(existingValue !== undefined && !/(-webkit-|box)/.test(existingValue)){ // now it gets complicated. There is a declaration for the property we want to add, but the value is different..
-		            		console.log('Whoa, Sir! We want to add "' + prop + ':' + value +'", but found "' + prop + ':' + existingValue +'"');
+                }
+                if(prop || value){
+                    prop = prop || decl.property;
+                    value = value || decl.value
+                    if(hasDeclaration(fixupDeclarations.concat(rule.declarations), prop, value, rxfix))continue;
+                    if(warnAgainstPotentiallyOverwrittenValues){
+                        var existingValue = getValueForProperty(fixupDeclarations.concat(rule.declarations), prop, false);
+                        if(existingValue !== undefined && !/(-webkit-|box)/.test(existingValue)){ // now it gets complicated. There is a declaration for the property we want to add, but the value is different..
+                            console.log('Whoa, Sir! We want to add "' + prop + ':' + value +'", but found "' + prop + ':' + existingValue +'"');
 
-		            	}
-	            	}
+                        }
+                    }
                     // We follow the standards - better not to pseudo-standardise -webkit-something
                     if(allW3CSSProperties.indexOf(prop) === -1)continue;
 
-	                fixupDeclarations.push({type:'declaration', property:prop, value:value, _fxjsdefined:true});
+                    fixupDeclarations.push({type:'declaration', property:prop, value:value, _fxjsdefined:true});
                     // extra gotcha: per Gecko's reading of the spec, border-image will only appear if border-style or border-width is set..
                     if(prop === 'border-image' && getValueForProperty(fixupDeclarations.concat(rule.declarations), 'border-style', false) === undefined){
                         //fixupDeclarations[fixupDeclarations.length - 1].value += ' fill';
                         fixupDeclarations.push({type:'declaration', property:'border-style', value:'solid', _fxjsdefined:true});
                     }
-	            }
+                }
             }
             if(fixupDeclarations.length > 0){
                 //fixupRules.push({type:'rule', selectors:rule.selectors.concat([]), declarations:fixupDeclarations.concat([])});
                 rule.declarations = rule.declarations.concat(fixupDeclarations); // add our custom declarations to the end of the current rules
             }
         }else if(rule.rules){
-        	for (var k = 0; k < rule.rules.length; k++) {
-        		insertFixupDeclarations(rule.rules[k]);
-        	};
+            for (var k = 0; k < rule.rules.length; k++) {
+                insertFixupDeclarations(rule.rules[k]);
+            };
         }
     }
 }
@@ -240,7 +241,7 @@ function createFixupFlexboxDeclaration(decl, parent){
 }
 
 function createFixupGradientDeclaration(decl, parent){
-    var value = decl.value.trim(), newValue='', prop = decl.property.replace(/-webkit-/, '');
+    var value = decl.value.trim(), newValue='', prop = decl.property.replace(/-webkit-/, ''), rxfix;
     // -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*)
     // fff -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#f6f6f6));
     // Sometimes there is code before the -webkit-gradient, for example when it's part of a more complex background: shorthand declaration
@@ -259,6 +260,7 @@ function createFixupGradientDeclaration(decl, parent){
             if(parts[i].name === '-webkit-gradient'){
                 type = parts[i].args[0].name;
                 newValue += type + '-gradient('; // radial or linear
+                rxfix = new RegExp(type + '-gradient\\(', '');
             }
             newValue += standardizeOldGradientArgs(type, parts[i].args.slice(1));
             newValue += ')' // end of gradient method
@@ -293,8 +295,10 @@ function createFixupGradientDeclaration(decl, parent){
                 str = words.join(' ');
                 return ( 'to ' + str);
             });
+            rxfix = /linear-gradient\(/;
         }else{
             newValue = newValue.replace(/(top|bottom|left|right)+\s/, 'at $1 ');
+            rxfix = /radial-gradient\(/;
         }
 
         newValue = newValue.replace(/\d+deg/, function (val) {
@@ -311,7 +315,7 @@ function createFixupGradientDeclaration(decl, parent){
         newValue = head + newValue;
     }
     // GM_log(newValue)
-    return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true};
+    return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true, rxfix:rxfix};
 }
 
 function getValueForProperty(declarations, property, prefixAgnostic){
@@ -319,19 +323,17 @@ function getValueForProperty(declarations, property, prefixAgnostic){
        if(declarations[i].property == property || (prefixAgnostic && declarations[i].property.substr(8) == property)) return declarations[i].value;
     }
 }
-function hasDeclaration(declarations, property, value, prefixAgnostic, checkFunctionNameOnly){
-	if(checkFunctionNameOnly && value.indexOf('(') > -1){
-		value = value.match(/\b(\w+)\(/)[1];
-		var rx = new RegExp("(^|[\\s:,]+)" + value + "\\s*\\(", "i");
-	}else{
-		checkFunctionNameOnly = false;
-	}
+function hasDeclaration(declarations, property, value, rxfix){
     for(var i=0;i<declarations.length;i++){
-       if(declarations[i].property == property || (prefixAgnostic && declarations[i].property.substr(8) == property)){
-       		if(declarations[i].value === value || checkFunctionNameOnly && rx.test(declarations[i].value)){
-       			return true;
-       		}
-       }
+        if(rxfix){
+            if(rxfix.test(declarations[i].value)){ /* we have a value in this set that matches the custom check */
+                return true;
+            }
+        }else if(declarations[i].property == property){
+               if(declarations[i].value === value){
+                   return true;
+               }
+        }
     }
     return false;
 }
