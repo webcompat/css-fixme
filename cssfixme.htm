@@ -467,6 +467,14 @@ function stripHTMLComments (str) {
     str = str.replace(/-->\s*$/, '');
     return str;
 }
+document.getElementsByTagName('pre')[0].addEventListener('dblclick', function(e){
+    window.getSelection().removeAllRanges();
+    var rng = document.createRange();
+    rng.selectNodeContents(document.getElementsByTagName('pre')[0]);
+    window.getSelection().addRange(rng);
+    e.preventDefault();
+}, false);
+
 function GM_log(){}
 </script>
 </body>
