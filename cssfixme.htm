@@ -420,7 +420,7 @@ function standardizeOldGradientArgs(type, args){
         var position, color, colorIndex;
         if(args[j].name === 'color-stop'){
             position = args[j].args[0].name;
-            colorIndex = 1;
+            colorIndex = args[j].args.length === 1 ? 0 : 1;
         }else if (args[j].name === 'to') {
             position = '100%';
             colorIndex = 0;
