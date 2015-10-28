@@ -260,7 +260,7 @@ function createFixupGradientDeclaration(decl, parent){
             if(parts[i].name === '-webkit-gradient'){
                 type = parts[i].args[0].name;
                 newValue += type + '-gradient('; // radial or linear
-                rxfix = new RegExp(type + '-gradient\\(', '');
+                rxfix = new RegExp('(^|\s)'+type + '-gradient\\(', '');
             }
             newValue += standardizeOldGradientArgs(type, parts[i].args.slice(1));
             newValue += ')' // end of gradient method
