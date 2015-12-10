@@ -3,11 +3,11 @@
 var allW3CSSProperties = ["align-content","align-items","align-self","alignment-adjust","alignment-baseline","all","anchor-point","animation","animation-delay","animation-direction","animation-duration","animation-fill-mode","animation-iteration-count","animation-name","animation-play-state","animation-timing-function","appearance","azimuth","backface-visibility","background","background-attachment","background-clip","background-color","background-image","background-origin","background-position","background-repeat","background-size","baseline-shift","binding","bleed","bookmark-label","bookmark-level","bookmark-state","bookmark-target","border","border-bottom","border-bottom-color","border-bottom-left-radius","border-bottom-right-radius","border-bottom-style","border-bottom-width","border-collapse","border-color","border-image","border-image-outset","border-image-repeat","border-image-slice","border-image-source","border-image-width","border-left","border-left-color","border-left-style","border-left-width","border-radius","border-right","border-right-color","border-right-style","border-right-width","border-spacing","border-style","border-top","border-top-color","border-top-left-radius","border-top-right-radius","border-top-style","border-top-width","border-width","bottom","box-decoration-break","box-shadow","box-sizing","break-after","break-before","break-inside","caption-side","chains","clear","clip","clip-path","clip-rule","color","color-interpolation-filters","color-profile","column-count","column-fill","column-gap","column-rule","column-rule-color","column-rule-style","column-rule-width","column-span","column-width","columns","contain","content","counter-increment","counter-reset","crop","cue","cue-after","cue-before","cursor","direction","display","dominant-baseline","drop-initial-after-adjust","drop-initial-after-align","drop-initial-before-adjust","drop-initial-before-align","drop-initial-size","drop-initial-value","elevation","empty-cells","filter","flex","flex-basis","flex-direction","flex-flow","flex-grow","flex-shrink","flex-wrap","float","float-offset","flood-color","flood-opacity","flow-from","flow-into","font","font-family","font-feature-settings","font-kerning","font-language-override","font-size","font-size-adjust","font-stretch","font-style","font-synthesis","font-variant","font-variant-alternates","font-variant-caps","font-variant-east-asian","font-variant-ligatures","font-variant-numeric","font-variant-position","font-weight","grid","grid-area","grid-auto-columns","grid-auto-flow","grid-auto-position","grid-auto-rows","grid-column","grid-column-end","grid-column-start","grid-row","grid-row-end","grid-row-start","grid-template","grid-template-areas","grid-template-columns","grid-template-rows","hanging-punctuation","height","hyphens","icon","image-orientation","image-resolution","ime-mode","inline-box-align","justify-content","justify-items","justify-self","left","letter-spacing","lighting-color","line-break","line-height","line-stacking","line-stacking-ruby","line-stacking-shift","line-stacking-strategy","list-style","list-style-image","list-style-position","list-style-type","margin","margin-bottom","margin-left","margin-right","margin-top","marker-offset","marks","mask","mask-box","mask-box-outset","mask-box-repeat","mask-box-slice","mask-box-source","mask-box-width","mask-clip","mask-image","mask-origin","mask-position","mask-repeat","mask-size","mask-source-type","mask-type","max-height","max-lines","max-width","min-height","min-width","move-to","nav-down","nav-index","nav-left","nav-right","nav-up","object-fit","object-position","opacity","order","orphans","outline","outline-color","outline-offset","outline-style","outline-width","overflow","overflow-wrap","overflow-x","overflow-y","padding","padding-bottom","padding-left","padding-right","padding-top","page","page-break-after","page-break-before","page-break-inside","page-policy","pause","pause-after","pause-before","perspective","perspective-origin","pitch","pitch-range","play-during","position","presentation-level","quotes","region-fragment","rendering-intent","resize","rest","rest-after","rest-before","richness","right","rotation","rotation-point","ruby-align","ruby-overhang","ruby-position","ruby-span","shape-image-threshold","shape-outside","shape-margin","size","speak","speak-as","speak-header","speak-numeral","speak-punctuation","speech-rate","stress","string-set","tab-size","table-layout","target","target-name","target-new","target-position","text-align","text-align-last","text-combine-horizontal","text-decoration","text-decoration-color","text-decoration-line","text-decoration-skip","text-decoration-style","text-emphasis","text-emphasis-color","text-emphasis-position","text-emphasis-style","text-height","text-indent","text-justify","text-orientation","text-outline","text-overflow","text-shadow","text-space-collapse","text-transform","text-underline-position","text-wrap","top","transform","transform-origin","transform-style","transition","transition-delay","transition-duration","transition-property","transition-timing-function","unicode-bidi","vertical-align","visibility","voice-balance","voice-duration","voice-family","voice-pitch","voice-range","voice-rate","voice-stress","voice-volume","volume","white-space","widows","width","word-break","word-spacing","word-wrap","wrap-flow","wrap-through","writing-mode","z-index"];
 var warnAgainstPotentiallyOverwrittenValues = true; // outputs console error if we override an existing property except the non-standard one
 /* Derived from GreaseMonkey script. Adapted to give a prettier output.. */
-function doTheBigStyleFixing(str){
+function doTheBigStyleFixing(str, outputElm){
     /* This method builds a "pretty" view of the CSS with amended rules highlighted in the PRE element */
     var fixupStyle = {"type": "stylesheet", stylesheet: {rules: []}};
-    var pre = document.getElementsByTagName('pre')[0], parent;
-    pre.innerHTML = '';
+    outputElm = outputElm || document.getElementsByTagName('pre')[0], parent;
+    outputElm.innerHTML = '';
     try{
         var oldRules = css.parse(stripHTMLComments(str));
     }catch(e){
@@ -27,28 +27,28 @@ function doTheBigStyleFixing(str){
        var prePropWS = compact ? '' : '\n';
        if(rule.type === 'rule'){
             var theSelectors = rule.selectors.join(compact? ',\n' : ', ')
-            pre.appendChild(document.createTextNode( '\n' + strindent1 + theSelectors+'{'))
+            outputElm.appendChild(document.createTextNode( '\n' + strindent1 + theSelectors+'{'))
             for(var decl, j = 0; decl = rule.declarations[j]; j++){
                 // decl.type, decl.property, decl.value
                 // custom: decl._fxjsdefined
-                parent = decl._fxjsdefined ? pre.appendChild(document.createElement('strong')) : pre;
+                parent = decl._fxjsdefined ? outputElm.appendChild(document.createElement('strong')) : outputElm;
                 if(decl.type === 'declaration'){
                         parent.appendChild(document.createTextNode(prePropWS + strindent2 + decl.property + propValSep + decl.value + ';'))
                 }else if(decl.type === 'comment'){
                         parent.appendChild(document.createTextNode( prePropWS + '/*' + decl.comment + '*/'))
                 }
             }
-            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}\n'))
+            outputElm.appendChild(document.createTextNode(prePropWS + strindent1 + '}\n'))
         }else if(rule.type === 'comment'){
-            pre.appendChild(document.createTextNode( prePropWS + '/*' + rule.comment + '*/'))
+            outputElm.appendChild(document.createTextNode( prePropWS + '/*' + rule.comment + '*/'))
         }else if(rule.type === 'media'){
-            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '@media ' + rule.media + '{' ));
+            outputElm.appendChild(document.createTextNode(prePropWS + strindent1 + '@media ' + rule.media + '{' ));
             for(var subrule, k = 0; subrule = rule.rules[k]; k++){
                 stringifyRuleToDOM(subrule, indent+1);
             }
-            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '}'))
+            outputElm.appendChild(document.createTextNode(prePropWS + strindent1 + '}'))
         }else if(rule.type === 'charset'){
-            pre.appendChild(document.createTextNode(prePropWS + strindent1 + '@charset ' + rule.charset + ';'))
+            outputElm.appendChild(document.createTextNode(prePropWS + strindent1 + '@charset ' + rule.charset + ';'))
 
         }
     }
