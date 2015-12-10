@@ -12,12 +12,30 @@
     <p>Note: some <em>-webkit-</em> prefixed properties do not (yet?) have standardised equivalents. This tool will deliberately not add pseudo-standard code on the assumption that the standards will one day match the current -webkit- implementation.</p>
     <p>This uses the <a href="https://github.com/reworkcss/rework">ReworkCSS</a> library for parsing and stringifying CSS.</p>
     <p>Paste CSS in this box to see what needs fixing:</p>
-    <textarea></textarea><br><button type="button" onclick="doTheBigStyleFixing(document.getElementsByTagName('textarea')[0].value)">Add standard equivalents for prefixed CSS</button> <label><input type="checkbox" name="compact">Compact output (whitespace only after closing brace)</label>
-    <pre></pre>
+    <textarea></textarea><br><button type="button" id="do_fixup">Add standard equivalents for prefixed CSS</button> <label><input type="checkbox" name="compact">Compact output (whitespace only after closing brace)</label>
+    <pre id="fixedcss"></pre>
     <!--
 TODO:     -webkit-border-radius: 50% 2px;
     border-radius: 50% / 2px; ??
      -->
 <script src="js/css-fixme.js"></script>
+<script>
+document.getElementById('do_fixup').addEventListener('click', function(){
+    var csscode = document.getElementsByTagName('textarea')[0].value;
+    var pre = document.getElementById('fixedcss');
+    var compact = document.getElementsByName('compact')[0].checked;
+    doTheBigStyleFixing(csscode, pre, compact);
+}, false);
+
+document.getElementsByTagName('pre')[0].addEventListener('dblclick', function(e) {
+    window.getSelection().removeAllRanges();
+    var rng = document.createRange();
+    rng.selectNodeContents(document.getElementsByTagName('pre')[0]);
+    window.getSelection().addRange(rng);
+    e.preventDefault();
+}, false);
+
+</script>
+
 </body>
 </html>
