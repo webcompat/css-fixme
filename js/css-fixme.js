@@ -419,6 +419,10 @@ function createFixupGradientDeclaration(decl) {
         newValue += type + '-gradient('; // radial or linear
         rxfix = new RegExp('(^|\s)' + type + '-gradient\\(', '');
       }
+      // Small precaution to avoid bloat in the CSS ouput
+      if(!(type === 'radial' || type === 'linear')) {
+        continue;
+      }
       newValue += standardizeOldGradientArgs(type, parts[i].args.slice(1));
       newValue += ')'; // end of gradient method
       if (i < parts.length - 1) {
