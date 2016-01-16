@@ -249,7 +249,11 @@ function createFixupRulesFromCSS(obj) {
           tmp = createFixupFlexboxDeclaration(decl, rule.declarations);
           prop = tmp.property, value = tmp.value;
         } else if (/-webkit-(linear-|radial-)?gradient/i.test(decl.value)) {
-          tmp = createFixupGradientDeclaration(decl, rule.declarations);
+          try {
+            tmp = createFixupGradientDeclaration(decl, rule.declarations);
+          } catch (e) {
+            continue;
+          }
           prop = tmp.property, value = tmp.value, rxfix = tmp.rxfix;
         } else {
           if (/-webkit-/.test(decl.property)) {
@@ -471,7 +475,6 @@ function createFixupGradientDeclaration(decl) {
   if (head) {
     newValue = head + newValue;
   }
-  // GM_log(newValue)
   return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true, rxfix:rxfix};
 }
 
