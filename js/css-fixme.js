@@ -482,4 +482,17 @@ function createFixupGradientDeclaration(decl) {
   return {type:'declaration', property:prop, value:newValue, _fxjsdefined:true, rxfix:rxfix};
 }
 
+document.getElementById('do_fixup').addEventListener('click', function(){
+    var csscode = document.getElementsByTagName('textarea')[0].value;
+    var pre = document.getElementById('fixedcss');
+    var compact = document.getElementsByName('compact')[0].checked;
+    doTheBigStyleFixing(csscode, pre, compact);
+}, false);
 
+document.getElementsByTagName('pre')[0].addEventListener('dblclick', function(e) {
+    window.getSelection().removeAllRanges();
+    var rng = document.createRange();
+    rng.selectNodeContents(document.getElementsByTagName('pre')[0]);
+    window.getSelection().addRange(rng);
+    e.preventDefault();
+}, false);
